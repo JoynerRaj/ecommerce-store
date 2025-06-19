@@ -1,32 +1,33 @@
-version: '3'
+version: "3.8"
 
 services:
-  backend:
-    build: ./backend
-    ports:
-      - "5000:5000"     
-    depends_on:
-      - mongo
-    environment:
-      - DB_CONNECTION=mongodb://mongo:27017/your-db-name
-
   frontend:
     build:
       context: ./frontend
-    container_name: frontend-1
     ports:
       - "3000:3000"
-    depends_on:
-      - backend
     environment:
       - CHOKIDAR_USEPOLLING=true
       - HOST=0.0.0.0
-      - NODE_OPTIONS=--openssl-legacy-provider 
     stdin_open: true
     tty: true
 
-        
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/ecommerce-db
+
   mongo:
     image: mongo
     ports:
       - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

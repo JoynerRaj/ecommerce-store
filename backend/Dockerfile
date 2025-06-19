@@ -1,21 +1,23 @@
-# backend/Dockerfile
+# Use official Node.js image
 FROM node:18
 
-# Install build tools and Python
-RUN apt-get update && \
-    apt-get install -y python3 make g++ && \
-    ln -s /usr/bin/python3 /usr/bin/python && \
-    rm -rf /var/lib/apt/lists/*
-
+# Create app directory
 WORKDIR /app
 
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install node modules with compatibility
-RUN npm install --legacy-peer-deps
+# Install backend dependencies
+RUN npm install
 
+# Copy the rest of the backend source code
 COPY . .
 
+# Expose backend port
 EXPOSE 5000
 
-CMD ["npm", "start"]
+# Set environment variable (you can override in docker-compose or CLI)
+ENV PORT=5000
+
+# Start the backend
+CMD ["node", "app.js"]
